@@ -19,12 +19,13 @@ export default function Analysis() {
   const [interestRate, setInterestRate] = useState("");
 
   const calculateMetrics = () => {
-    const price = parseFloat(propertyPrice) || 0;
-    const income = parseFloat(expectedIncome) || 0;
+    // 万円単位の入力値を円に変換
+    const price = (parseFloat(propertyPrice) || 0) * 10000;
+    const income = (parseFloat(expectedIncome) || 0) * 10000;
     const vacancy = parseFloat(vacancyRate) || 0;
     const expenseRt = parseFloat(expenseRate) || 0;
-    const capital = parseFloat(ownCapital) || 0;
-    const loan = parseFloat(loanAmount) || 0;
+    const capital = (parseFloat(ownCapital) || 0) * 10000;
+    const loan = (parseFloat(loanAmount) || 0) * 10000;
     const term = parseFloat(loanTerm) || 0;
     const rate = parseFloat(interestRate) || 0;
 
@@ -57,14 +58,14 @@ export default function Analysis() {
     const investmentYield = capital > 0 ? (netIncome / capital) * 100 : 0;
 
     return {
-      monthlyPayment: monthlyPayment.toFixed(0),
-      annualPayment: annualPayment.toFixed(0),
+      monthlyPayment: (monthlyPayment / 10000).toFixed(1),
+      annualPayment: (annualPayment / 10000).toFixed(1),
       paymentRatio: paymentRatio.toFixed(1),
-      totalPayment: totalPayment.toFixed(0),
-      deductionsExpenses: deductionsExpenses.toFixed(0),
-      annualExpenses: annualExpenses.toFixed(0),
-      netIncome: netIncome.toFixed(0),
-      monthlyNetIncome: monthlyNetIncome.toFixed(0),
+      totalPayment: (totalPayment / 10000).toFixed(1),
+      deductionsExpenses: (deductionsExpenses / 10000).toFixed(1),
+      annualExpenses: (annualExpenses / 10000).toFixed(1),
+      netIncome: (netIncome / 10000).toFixed(1),
+      monthlyNetIncome: (monthlyNetIncome / 10000).toFixed(1),
       grossYield: grossYield.toFixed(2),
       netYield: netYield.toFixed(2),
       investmentYield: investmentYield.toFixed(2),
@@ -90,23 +91,25 @@ export default function Analysis() {
             <CardContent className="space-y-4">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="propertyPrice">物件価格（円）</Label>
+                  <Label htmlFor="propertyPrice">物件価格（万円）</Label>
                   <Input
                     id="propertyPrice"
                     type="number"
+                    step="0.1"
                     value={propertyPrice}
                     onChange={(e) => setPropertyPrice(e.target.value)}
-                    placeholder="30000000"
+                    placeholder="3000.0"
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="expectedIncome">想定収入（年額・円）</Label>
+                  <Label htmlFor="expectedIncome">想定収入（年額・万円）</Label>
                   <Input
                     id="expectedIncome"
                     type="number"
+                    step="0.1"
                     value={expectedIncome}
                     onChange={(e) => setExpectedIncome(e.target.value)}
-                    placeholder="1440000"
+                    placeholder="144.0"
                   />
                 </div>
               </div>
@@ -138,23 +141,25 @@ export default function Analysis() {
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label htmlFor="ownCapital">自己資金（円）</Label>
+                  <Label htmlFor="ownCapital">自己資金（万円）</Label>
                   <Input
                     id="ownCapital"
                     type="number"
+                    step="0.1"
                     value={ownCapital}
                     onChange={(e) => setOwnCapital(e.target.value)}
-                    placeholder="6000000"
+                    placeholder="600.0"
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="loanAmount">借入金額（円）</Label>
+                  <Label htmlFor="loanAmount">借入金額（万円）</Label>
                   <Input
                     id="loanAmount"
                     type="number"
+                    step="0.1"
                     value={loanAmount}
                     onChange={(e) => setLoanAmount(e.target.value)}
-                    placeholder="24000000"
+                    placeholder="2400.0"
                   />
                 </div>
               </div>
@@ -198,10 +203,10 @@ export default function Analysis() {
                     <div>
                       <p className="text-sm font-medium text-blue-900">月額返済額</p>
                       <p className="text-2xl font-bold text-blue-900">
-                        ¥{parseInt(metrics.monthlyPayment).toLocaleString()}
+                        {parseFloat(metrics.monthlyPayment).toLocaleString()}万円
                       </p>
                       <p className="text-xs text-blue-700 mt-1">
-                        年額：¥{parseInt(metrics.annualPayment).toLocaleString()}
+                        年額：{parseFloat(metrics.annualPayment).toLocaleString()}万円
                       </p>
                     </div>
                     <Home className="w-8 h-8 text-blue-600" />
@@ -226,7 +231,7 @@ export default function Analysis() {
                     <div>
                       <p className="text-sm font-medium text-red-900">返済総額</p>
                       <p className="text-2xl font-bold text-red-900">
-                        ¥{parseInt(metrics.totalPayment).toLocaleString()}
+                        {parseFloat(metrics.totalPayment).toLocaleString()}万円
                       </p>
                       <p className="text-xs text-red-700 mt-1">借入期間全体</p>
                     </div>
@@ -240,7 +245,7 @@ export default function Analysis() {
                     <div>
                       <p className="text-sm font-medium text-orange-900">控除・諸経費（年額）</p>
                       <p className="text-2xl font-bold text-orange-900">
-                        ¥{parseInt(metrics.deductionsExpenses).toLocaleString()}
+                        {parseFloat(metrics.deductionsExpenses).toLocaleString()}万円
                       </p>
                       <p className="text-xs text-orange-700 mt-1">想定収入×（空室率＋諸経費率）</p>
                     </div>
@@ -254,7 +259,7 @@ export default function Analysis() {
                     <div>
                       <p className="text-sm font-medium text-yellow-900">年間支出</p>
                       <p className="text-2xl font-bold text-yellow-900">
-                        ¥{parseInt(metrics.annualExpenses).toLocaleString()}
+                        {parseFloat(metrics.annualExpenses).toLocaleString()}万円
                       </p>
                       <p className="text-xs text-yellow-700 mt-1">返済額＋控除・諸経費</p>
                     </div>
@@ -268,10 +273,10 @@ export default function Analysis() {
                     <div>
                       <p className="text-sm font-medium text-green-900">手取り（月額/年額）</p>
                       <p className="text-2xl font-bold text-green-900">
-                        ¥{parseInt(metrics.monthlyNetIncome).toLocaleString()}
+                        {parseFloat(metrics.monthlyNetIncome).toLocaleString()}万円
                       </p>
                       <p className="text-xs text-green-700 mt-1">
-                        年額：¥{parseInt(metrics.netIncome).toLocaleString()}
+                        年額：{parseFloat(metrics.netIncome).toLocaleString()}万円
                       </p>
                     </div>
                     <DollarSign className="w-8 h-8 text-green-600" />
