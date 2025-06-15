@@ -22,9 +22,9 @@ export default function Analysis() {
   const updateLoanAmount = () => {
     const price = parseFloat(propertyPrice) || 0;
     const capital = parseFloat(ownCapital) || 0;
-    if (price > 0 && capital >= 0) {
+    if (price >= 0 && capital >= 0) {
       const calculatedLoan = Math.max(0, price - capital);
-      setLoanAmount(calculatedLoan.toString());
+      setLoanAmount(calculatedLoan.toFixed(1));
     }
   };
 
