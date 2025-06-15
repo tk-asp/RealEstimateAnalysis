@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Calculator, TrendingUp, TrendingDown, DollarSign, Home } from "lucide-react";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 export default function Analysis() {
   const [propertyPrice, setPropertyPrice] = useState("");
@@ -19,14 +19,17 @@ export default function Analysis() {
   const [interestRate, setInterestRate] = useState("");
 
   // 借入金額を自動計算
-  const updateLoanAmount = () => {
-    const price = parseFloat(propertyPrice) || 0;
-    const capital = parseFloat(ownCapital) || 0;
-    if (price >= 0 && capital >= 0) {
+  useEffect(() => {
+    const price = Number(propertyPrice);
+    const capital = Number(ownCapital);
+    if (!Number.isNaN(price) && !Number.isNaN(capital) && price >= 0 && capital >= 0) {
       const calculatedLoan = Math.max(0, price - capital);
-      setLoanAmount(calculatedLoan.toFixed(1));
+      // 整数なら小数点なし、小数なら1桁表示
+      setLoanAmount(Number.isInteger(calculatedLoan) ? String(calculatedLoan) : calculatedLoan.toFixed(1));
+    } else {
+      setLoanAmount("");
     }
-  };
+  }, [propertyPrice, ownCapital]);
 
   const calculateMetrics = () => {
     // 万円単位の入力値を円に変換
@@ -111,8 +114,6 @@ export default function Analysis() {
                     value={propertyPrice}
                     onChange={(e) => {
                       setPropertyPrice(e.target.value);
-                      // 物件価格が変更されたら借入金額を自動計算
-                      setTimeout(updateLoanAmount, 0);
                     }}
                     placeholder="3000.0"
                   />
@@ -165,8 +166,6 @@ export default function Analysis() {
                     value={ownCapital}
                     onChange={(e) => {
                       setOwnCapital(e.target.value);
-                      // 自己資金が変更されたら借入金額を自動計算
-                      setTimeout(updateLoanAmount, 0);
                     }}
                     placeholder="600.0"
                   />
