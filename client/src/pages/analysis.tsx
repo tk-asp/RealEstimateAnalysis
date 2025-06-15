@@ -18,6 +18,16 @@ export default function Analysis() {
   const [loanTerm, setLoanTerm] = useState("");
   const [interestRate, setInterestRate] = useState("");
 
+  // 借入金額を自動計算
+  const updateLoanAmount = () => {
+    const price = parseFloat(propertyPrice) || 0;
+    const capital = parseFloat(ownCapital) || 0;
+    if (price > 0 && capital >= 0) {
+      const calculatedLoan = Math.max(0, price - capital);
+      setLoanAmount(calculatedLoan.toString());
+    }
+  };
+
   const calculateMetrics = () => {
     // 万円単位の入力値を円に変換
     const price = (parseFloat(propertyPrice) || 0) * 10000;
@@ -54,7 +64,9 @@ export default function Analysis() {
     
     // 利回り計算
     const grossYield = price > 0 ? (income / price) * 100 : 0;
-    const netYield = price > 0 ? (netIncome / price) * 100 : 0;
+    // 実質利回り = (家賃収入（年間）- 控除・諸経費（年額）) ÷ 物件価格
+    const realNetIncome = income - deductionsExpenses;
+    const netYield = price > 0 ? (realNetIncome / price) * 100 : 0;
     const investmentYield = capital > 0 ? (netIncome / capital) * 100 : 0;
 
     return {
@@ -97,7 +109,11 @@ export default function Analysis() {
                     type="number"
                     step="0.1"
                     value={propertyPrice}
-                    onChange={(e) => setPropertyPrice(e.target.value)}
+                    onChange={(e) => {
+                      setPropertyPrice(e.target.value);
+                      // 物件価格が変更されたら借入金額を自動計算
+                      setTimeout(updateLoanAmount, 0);
+                    }}
                     placeholder="3000.0"
                   />
                 </div>
@@ -147,12 +163,16 @@ export default function Analysis() {
                     type="number"
                     step="0.1"
                     value={ownCapital}
-                    onChange={(e) => setOwnCapital(e.target.value)}
+                    onChange={(e) => {
+                      setOwnCapital(e.target.value);
+                      // 自己資金が変更されたら借入金額を自動計算
+                      setTimeout(updateLoanAmount, 0);
+                    }}
                     placeholder="600.0"
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label htmlFor="loanAmount">借入金額（万円）</Label>
+                  <Label htmlFor="loanAmount">借入金額（万円）<span className="text-xs text-gray-500 ml-1">※自動計算</span></Label>
                   <Input
                     id="loanAmount"
                     type="number"
@@ -160,6 +180,8 @@ export default function Analysis() {
                     value={loanAmount}
                     onChange={(e) => setLoanAmount(e.target.value)}
                     placeholder="2400.0"
+                    className="bg-gray-50"
+                    readOnly
                   />
                 </div>
               </div>
@@ -301,7 +323,7 @@ export default function Analysis() {
                     <div>
                       <p className="text-sm font-medium text-teal-900">実質利回り</p>
                       <p className="text-2xl font-bold text-teal-900">{metrics.netYield}%</p>
-                      <p className="text-xs text-teal-700 mt-1">年間手取り/物件価格</p>
+                      <p className="text-xs text-teal-700 mt-1">（家賃収入-控除・諸経費）/物件価格</p>
                     </div>
                     <TrendingUp className="w-8 h-8 text-teal-600" />
                   </div>
