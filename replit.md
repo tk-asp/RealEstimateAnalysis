@@ -107,6 +107,7 @@ The application is designed to integrate with:
 ```
 Changelog:
 - June 15, 2025. Initial setup
+- June 15, 2025. Enhanced investment simulation with comprehensive financial calculations including payment ratios, deductions, net income, and investment yields
 ```
 
 ## User Preferences

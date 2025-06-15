@@ -67,15 +67,15 @@ export default function Sidebar({ isOpen, onToggle }: SidebarProps) {
                 const isActive = location === item.href || (location === "/" && item.href === "/dashboard");
                 return (
                   <Link key={item.name} href={item.href}>
-                    <a className={cn(
-                      "flex items-center px-4 py-3 rounded-lg font-medium transition-colors",
+                    <div className={cn(
+                      "flex items-center px-4 py-3 rounded-lg font-medium transition-colors cursor-pointer",
                       isActive
                         ? "text-real-estate-primary bg-blue-50"
                         : "text-gray-600 hover:text-real-estate-primary hover:bg-gray-50"
                     )}>
                       <item.icon className="w-5 h-5 mr-3" />
                       {item.name}
-                    </a>
+                    </div>
                   </Link>
                 );
               })}
